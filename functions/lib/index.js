@@ -1,10 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-const firebaseHelper = require("firebase-functions-helper/dist");
-const express = require("express");
-const bodyParser = require("body-parser");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const firebaseHelper = require('firebase-functions-helper/dist');
+const express = require('express');
+const bodyParser = require('body-parser');
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 const app = express();
@@ -13,48 +13,62 @@ const main = express();
 main.use(bodyParser.json());
 main.use(bodyParser.urlencoded({ extended: false }));
 main.use('/api/v1', app);
-const contactsCollection = 'contacts';
+const productsCollection = 'products';
 exports.webApi = functions.https.onRequest(main);
-// Add new contact
-app.post('/contacts', async (req, res) => {
-    try {
-        const contact = {
-            firstName: req.body['firstName'],
-            lastName: req.body['lastName'],
-            email: req.body['email']
-        };
-        const newDoc = await firebaseHelper.firestore
-            .createNewDocument(db, contactsCollection, contact);
-        res.status(201).send(`Created a new contact: ${newDoc.id}`);
-    }
-    catch (error) {
-        res.status(400).send(`Contact should only contains firstName, lastName and email!!!`);
-    }
+// Add new product
+app.post('/products', async (req, res) => {
+  try {
+    const product = {
+      productName: req.body['productName'],
+      brandName: req.body['brandName'],
+      images: req.body['images'],
+      categories: req.body['categories'],
+    };
+    const newDoc = await firebaseHelper.firestore.createNewDocument(
+      db,
+      productsCollection,
+      product,
+    );
+    res.status(201).send(`Created a new product: ${newDoc.id}`);
+  } catch (error) {
+    res
+      .status(400)
+      .send(
+        `Product should only contains brandName, productName, images and categories!!!`,
+      );
+  }
 });
-// Update new contact
-app.patch('/contacts/:contactId', async (req, res) => {
-    const updatedDoc = await firebaseHelper.firestore
-        .updateDocument(db, contactsCollection, req.params.contactId, req.body);
-    res.status(204).send(`Update a new contact: ${updatedDoc}`);
+// Update new product
+app.patch('/products/:productId', async (req, res) => {
+  const updatedDoc = await firebaseHelper.firestore.updateDocument(
+    db,
+    productsCollection,
+    req.params.productId,
+    req.body,
+  );
+  res.status(204).send(`Update a new product: ${updatedDoc}`);
 });
-// View a contact
-app.get('/contacts/:contactId', (req, res) => {
-    firebaseHelper.firestore
-        .getDocument(db, contactsCollection, req.params.contactId)
-        .then(doc => res.status(200).send(doc))
-        .catch(error => res.status(400).send(`Cannot get contact: ${error}`));
+// View a product
+app.get('/products/:productId', (req, res) => {
+  firebaseHelper.firestore
+    .getDocument(db, productsCollection, req.params.productId)
+    .then(doc => res.status(200).send(doc))
+    .catch(error => res.status(400).send(`Cannot get product: ${error}`));
 });
-// View all contacts
-app.get('/contacts', (req, res) => {
-    firebaseHelper.firestore
-        .backup(db, contactsCollection)
-        .then(data => res.status(200).send(data))
-        .catch(error => res.status(400).send(`Cannot get contacts: ${error}`));
+// View all product
+app.get('/products', (req, res) => {
+  firebaseHelper.firestore
+    .backup(db, productsCollection)
+    .then(data => res.status(200).send(data))
+    .catch(error => res.status(400).send(`Cannot get products: ${error}`));
 });
-// Delete a contact 
-app.delete('/contacts/:contactId', async (req, res) => {
-    const deletedContact = await firebaseHelper.firestore
-        .deleteDocument(db, contactsCollection, req.params.contactId);
-    res.status(204).send(`Contact is deleted: ${deletedContact}`);
+// Delete a product
+app.delete('/products/:productId', async (req, res) => {
+  const deletedProduct = await firebaseHelper.firestore.deleteDocument(
+    db,
+    productsCollection,
+    req.params.productId,
+  );
+  res.status(204).send(`Product is deleted: ${deletedProduct}`);
 });
 //# sourceMappingURL=index.js.map
