@@ -1,37 +1,9 @@
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import FunctionTabs from './FunctionTabs';
-import Icon from '@material-ui/core/Icon';
-import { loadCSS } from 'fg-loadcss';
-
-function Copyright() {
-  return (
-    <Typography variant="body1" color="textSecondary" align="center">
-      {'Made with  '}
-      <Icon className="fab fa-react" />
-      {'  '}
-      <Icon className="fab fa-github" />
-      {'  '}
-      <Icon className="fab fa-google" />
-      {'  '}
-      <Icon className="fab fa-node-js" />
-      {'  &  '}
-      <Icon className="fas fa-heart" />
-      {'  by '}
-      <Link color="inherit" href="https://ajwad-shaikh.github.io/">
-        <strong>Ajwad Shaikh</strong>
-      </Link>
-      {'  - '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -70,13 +42,6 @@ const useStyles = makeStyles(theme => ({
 export default function AppLayout() {
   const classes = useStyles();
 
-  React.useEffect(() => {
-    loadCSS(
-      'https://use.fontawesome.com/releases/v5.1.0/css/all.css',
-      document.querySelector('#font-awesome-css'),
-    );
-  }, []);
-
   return (
     <React.Fragment>
       <CssBaseline />
@@ -89,9 +54,6 @@ export default function AppLayout() {
           search features
         </Typography>
         <FunctionTabs />
-        <Box mt={3} className={classes.footer}>
-          <Copyright />
-        </Box>
       </Paper>
     </React.Fragment>
   );

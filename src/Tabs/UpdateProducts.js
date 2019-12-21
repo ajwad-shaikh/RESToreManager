@@ -2,11 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Autocomplete from '@material-ui/lab/AutoComplete';
-import fire from '../fire';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,21 +24,15 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     margin: theme.spacing(2, 4),
-    display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
+    overflow: 'auto',
   },
 }));
 
-export default function UpdateProducts(props) {
+export default function UpdateProduct(props) {
   const classes = useStyles();
 
-  const [value, setValue] = React.useState('');
-
-  const defaultProps = {
-    options: hostList,
-    getOptionLabel: option => option.title,
-  };
+  const [response, setResponse] = React.useState('');
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -52,141 +46,125 @@ export default function UpdateProducts(props) {
     });
   };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleChange = newValue => {
+    setResponse(newValue);
   };
 
-  const sendEmail = postData => {
-    const response = axios.post(
-      'https://us-central1-entry-io.cloudfunctions.net/function-1',
-      postData,
-      { headers: { 'Content-Type': 'application/json' } },
-    );
-    console.log(response);
+  const updateProduct = (productId, patchData) => {
+    axios
+      .patch(
+        'https://restockmanager.firebaseapp.com/api/v1/products/' + productId,
+        patchData,
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+      .then(function(response) {
+        document.getElementById('update-product-form').reset();
+        handleClick(
+          'Thanks for updating the catalog, feels Amaz(on)ing!',
+          'success',
+        );
+        handleChange(JSON.stringify(patchData));
+      });
   };
 
   const handleResult = event => {
     event.preventDefault();
     const data = event.target;
-    const timestamp = Date.now();
-    var hostEmail = '';
-    hostList.find((host, i) => {
-      if (host.title === data.host.value) {
-        hostEmail = host.email;
-        return true; // stop searching
-      } else return false;
-    });
-    fire
-      .database()
-      .ref('check-ins/' + data.phone.value)
-      .set({
-        name: data.name.value,
-        phone: data.phone.value,
-        email: data.email.value,
-        checkin_ts: timestamp,
-        host: data.host.value,
-        host_email: hostEmail,
-      })
-      .then(function() {
-        const postData = {
-          dest: 'host',
-          host: data.host.value,
-          guest: data.name.value,
-          phone: data.phone.value,
-          guestEmail: data.email.value,
-          hostEmail: hostEmail,
-          checkinTime: timestamp,
-        };
-        sendEmail(postData);
-        document.getElementById('checkin-form').reset();
-        handleClick(
-          'Thanks for checking into TheCoolCompany, see you around!',
-          'success',
-        );
-        handleChange(1, '');
-      });
+    const categories = data.categories.value.split(',');
+    const imageUrls = data.images.value.split(',');
+    const productId = data.productId.value;
+    const patchData = {
+      productName: data.productName.value,
+      brandName: data.brandName.value,
+      categories: categories,
+      images: imageUrls,
+    };
+    updateProduct(productId, patchData);
   };
 
   return (
-    <form id="checkin-form" className={classes.root} onSubmit={handleResult}>
-      <TextField
-        variant="standard"
-        margin="normal"
-        required
-        fullWidth
-        id="name"
-        label="Name"
-        name="name"
-        autoComplete="name"
-        autoFocus
-        inputProps={{
-          maxLength: 40,
-        }}
-      />
-      <TextField
-        variant="standard"
-        margin="normal"
-        required
-        fullWidth
-        id="email"
-        label="Email Address"
-        name="email"
-        autoComplete="email"
-        inputProps={{
-          maxLength: 40,
-        }}
-      />
-      <TextField
-        variant="standard"
-        margin="normal"
-        required
-        fullWidth
-        name="phone"
-        label="Phone Number"
-        type="number"
-        id="phone"
-        autoComplete="phone"
-        InputProps={{
-          startAdornment: <InputAdornment position="start">+91</InputAdornment>,
-        }}
-        inputProps={{
-          maxLength: 10,
-          minLength: 10,
-        }}
-      />
-      <Autocomplete
-        {...defaultProps}
-        id="host"
-        value={value}
-        onChange={handleChange}
-        renderInput={params => (
+    <Grid container component="main" className={classes.root}>
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6}>
+        <form
+          id="update-product-form"
+          className={classes.paper}
+          onSubmit={handleResult}
+        >
           <TextField
-            {...params}
-            label="Host"
             variant="standard"
-            margin="dense"
+            margin="normal"
             required
             fullWidth
+            id="productId"
+            label="Product Id"
+            name="productId"
+            autoComplete="Product Id"
+            autoFocus
+            inputProps={{
+              maxLength: 40,
+            }}
           />
-        )}
-      />
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        fullWidth
-        className={classes.submit}
-      >
-        Check-In at TheCoolCompany
-      </Button>
-    </form>
+          <TextField
+            variant="standard"
+            margin="normal"
+            required
+            fullWidth
+            id="productName"
+            label="Product Name"
+            name="productName"
+            autoComplete="Product Name"
+            autoFocus
+            inputProps={{
+              maxLength: 40,
+            }}
+          />
+          <TextField
+            variant="standard"
+            margin="normal"
+            required
+            fullWidth
+            id="brandName"
+            label="Brand Name"
+            name="brandName"
+            autoComplete="Brand Name"
+            inputProps={{
+              maxLength: 40,
+            }}
+          />
+          <TextField
+            variant="standard"
+            margin="normal"
+            required
+            fullWidth
+            name="images"
+            label="Image URLs (separated by comma)"
+            id="images"
+            autoComplete="images"
+          />
+          <TextField
+            variant="standard"
+            margin="normal"
+            required
+            fullWidth
+            name="categories"
+            label="Product Categories (separated by comma)"
+            id="categories"
+            autoComplete="catergories"
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            className={classes.submit}
+          >
+            Update Catalog
+          </Button>
+        </form>
+      </Grid>
+      <Grid item xs={false} sm={4} md={7} component={Paper} elevation={6}>
+        <Typography className={classes.paper}>{response}</Typography>
+      </Grid>
+    </Grid>
   );
 }
-
-const hostList = [
-  { title: 'Cool CEO', email: 'shaikhajwad10@gmail.com' },
-  { title: 'Geek Tech Lead', email: 'shaikhajwad10@gmail.com' },
-  { title: 'Mighty HR', email: 'shaikhajwad10@gmail.com' },
-  { title: 'Persistent Marketer', email: 'shaikhajwad10@gmail.com' },
-  { title: 'Punny Social Media Manager', email: 'shaikhajwad10@gmail.com' },
-];

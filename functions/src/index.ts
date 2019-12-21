@@ -3,6 +3,7 @@ import * as admin from 'firebase-admin';
 import * as firebaseHelper from 'firebase-functions-helper/dist';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
@@ -11,6 +12,8 @@ db.settings(settings);
 
 const app = express();
 const main = express();
+
+app.use(cors());
 
 main.use(bodyParser.json());
 main.use(bodyParser.urlencoded({ extended: false }));
