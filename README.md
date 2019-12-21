@@ -186,7 +186,7 @@ After that, you can log in to Firebase in the terminal
 firebase login
 ```
 
-### Deploy to firebase
+### Deploy to Firebase
 
 For the first time, you have deploy the hosting and functions together
 
@@ -199,5 +199,11 @@ After that, you just need to deploy functions only
 ```
 firebase deploy --only functions
 ```
+
+## Testing
+
+Testing has been incorporated with [jest](https://jestjs.io/) and tests are written in the `__tests__` directory.
+
+Note - `FIREBASE_CONFIG` environment variable needs to be set before testing to not cause failure.
 
 #### Made with :heart: for Open Source!
