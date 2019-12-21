@@ -6,7 +6,7 @@
 
 The main aim was to create a REST API in a serverless environment. Firebase has a number of tools to help us in achieving the same.
 
-### To make it easier to interact with the API and see results, a Dashboard has been hosted on [https://restockmanager.firebaseapp.com]
+### To make it easier to interact with the API and see results, a Dashboard has been hosted on [https://restockmanager.firebaseapp.com](https://restockmanager.firebaseapp.com)
 
 - **Firebase Hosting** - Since any API needs a home address to receive calls, we need Firebase Hosting to host our function. Our functions are hosted at [https://restockmanager.firebaseapp.com/api/v1](https://restockmanager.firebaseapp.com/api/v1). The Hosting was also used to host a React App as a frontend dashboard to interact with the API.
 - **Firestore** - Our API will be interacting with a database, so we choose Firestore, a smooth, powerful. no-nonsense, NoSQL database.

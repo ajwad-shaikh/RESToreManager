@@ -70,8 +70,8 @@ export default function UpdateProduct(props) {
   const handleResult = event => {
     event.preventDefault();
     const data = event.target;
-    const categories = data.categories.value.split(',');
-    const imageUrls = data.images.value.split(',');
+    const categories = data.categories.value.split(/[ ,.]+/);
+    const imageUrls = data.images.value.split(/[ ,.]+/);
     const productId = data.productId.value;
     const patchData = {
       productName: data.productName.value,
